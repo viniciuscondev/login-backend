@@ -21,6 +21,7 @@ class UserController {
             validation.isRequired(passwordConfirmation, "Confirme sua senha");
             validation.isTrue(password !== passwordConfirmation, "A senha e a confirmação devem ser iguais");
             validation.isEmail(email, "Informe um email válido");
+            validation.isPasswordValid(password, "A senha deve ter mais que 6 caracteres");
 
             if(validation.errors.length > 0) {
                 response.status(400).json(validation.errors);
@@ -101,7 +102,34 @@ class UserController {
 
     async update(request: Request, response: Response) {
         try {
+            const { oldPassword, newPassword } = request.body;
+
+            const validation = new Validation();
+            validation.isRequired(oldPassword, "Informe sua senha atual");
+            validation.isRequired(newPassword, "Informe sua nova senha");
+            validation.isPasswordValid(newPassword, "A senha deve ter mais que 6 caracteres");
+
+            if(validation.errors.length > 0) {
+                response.status(400).json(validation.errors);
+                return;
+            }
+
+            if(bcrypt.compareSync(newPassword, (<any>request.user).password)) {
+                return response.status(400).send({ message: "A nova senha deve ser diferente da senha atual" });
+            }
+
+            var salt = await bcrypt.genSaltSync(10);
+            const hashedPassword = bcrypt.hashSync(newPassword, salt);
             
+            const usersRepository = getCustomRepository(UsersRepository);
+
+            const updatedUser = await usersRepository.update({ id: (<any>request.user).id }, { password: hashedPassword });
+
+            if(!updatedUser) {
+                return response.status(400).send({ message: "Operação inválida" });
+            }
+
+            return response.status(200).send({ message: "Senha atualizada com sucesso!" });
         } catch (error) {
             return response.status(500).send({ message: "Erro interno no servidor" });
         }

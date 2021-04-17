@@ -22,6 +22,11 @@ class Validation {
             this.errors.push({ message: message });
         }
     }
+    isPasswordValid(value: any, message: String) {
+        if(value.length < 6) {
+            this.errors.push({ message: message });
+        }
+    }
 }
 
 export { Validation }
