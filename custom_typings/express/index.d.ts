@@ -1,5 +1,6 @@
+/* eslint-disable no-unused-vars */
 declare namespace Express {
     interface Request {
-      user: Object 
+      user: Object
     }
-  }  
+  }

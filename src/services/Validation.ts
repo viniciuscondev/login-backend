@@ -1,32 +1,34 @@
 class Validation {
+  constructor() {
+    this.errors = [];
+  }
 
-    constructor() {
-        this.errors = [];
-    }
-    
     errors: Array<Object> = [];
 
     isTrue(value: any, message: String) {
-        if(value) {
-            this.errors.push({ message: message });
-        }
+      if (value) {
+        this.errors.push({ message });
+      }
     }
+
     isRequired(value: any, message: String) {
-        if(!value || value.length <= 0) {
-            this.errors.push({ message: message });            
-        }
+      if (!value || value.length <= 0) {
+        this.errors.push({ message });
+      }
     }
+
     isEmail(value: any, message: String) {
-        let reg = new RegExp(/^\w+([-+,']\w+)*@\w+([-,]\w+)*\.\w+([-.]\w+)*$/);
-        if(!reg.test(value)) {
-            this.errors.push({ message: message });
-        }
+      const reg = new RegExp(/^\w+([-+,']\w+)*@\w+([-,]\w+)*\.\w+([-.]\w+)*$/);
+      if (!reg.test(value)) {
+        this.errors.push({ message });
+      }
     }
+
     isPasswordValid(value: any, message: String) {
-        if(value.length < 6) {
-            this.errors.push({ message: message });
-        }
+      if (value.length < 6) {
+        this.errors.push({ message });
+      }
     }
 }
 
-export { Validation }
+export default Validation;

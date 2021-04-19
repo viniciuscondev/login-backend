@@ -2,30 +2,30 @@ import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 import {} from 'dotenv/config';
 import { getCustomRepository } from 'typeorm';
-import { UsersRepository } from '../repositories/UsersRepository';
+import UsersRepository from '../repositories/UsersRepository';
 
 export default async (request: Request, response: Response, next: NextFunction) => {
-    try {
-        const authorizationHeader = request.headers.authorization;
-        const [,token] = authorizationHeader.split(' ');
+  try {
+    const authorizationHeader = request.headers.authorization;
+    const [, token] = authorizationHeader.split(' ');
 
-        if(token) {
-            const jwtDecoded = jwt.verify(token, process.env.SECRET_KEY);
-            
-            request.user = (<any>jwtDecoded).user;
+    if (token) {
+      const jwtDecoded = jwt.verify(token, process.env.SECRET_KEY);
 
-            const usersRepository = getCustomRepository(UsersRepository);
+      request.user = (<any>jwtDecoded).user;
 
-            const userExists = await usersRepository.findOne({ id: (<any>request.user).id });
+      const usersRepository = getCustomRepository(UsersRepository);
 
-            if(!userExists) {
-                response.status(401).send({ message: "Usuário não existe" });
-                return;
-            }
+      const userExists = await usersRepository.findOne({ id: (<any>request.user).id });
 
-            next();
+      if (!userExists) {
+        response.status(401).send({ message: 'Usuário não existe' });
+        return;
+      }
+
+      next();
     }
-    } catch (error) {
-        return response.status(500).send({ message: "Erro interno no servidor" });        
-    }    
-}
+  } catch (error) {
+    response.status(500).send({ message: 'Erro interno no servidor' });
+  }
+};

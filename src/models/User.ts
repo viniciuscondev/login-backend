@@ -1,9 +1,10 @@
-import { Column, CreateDateColumn, Entity, PrimaryColumn } from "typeorm";
+import {
+  Column, CreateDateColumn, Entity, PrimaryColumn,
+} from 'typeorm';
 import { v4 as uuid } from 'uuid';
 
 @Entity('users')
 class User {
-    
     @PrimaryColumn()
     readonly id: string;
 
@@ -17,13 +18,14 @@ class User {
     password: string;
 
     @CreateDateColumn()
+    // eslint-disable-next-line camelcase
     created_at: Date
 
     constructor() {
-        if(!this.id) {
-            this.id = uuid();
-        }
+      if (!this.id) {
+        this.id = uuid();
+      }
     }
 }
 
-export { User }
+export default User;
