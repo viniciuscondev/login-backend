@@ -11,5 +11,6 @@ router.post('/users/register', userController.create);
 router.post('/users/login', userController.authenticate);
 router.put('/users/update', authentication, userController.update);
 router.delete('/users/delete', authentication, userController.delete);
+router.get('/users/verify', authentication, userController.verify);
 
 export default router;

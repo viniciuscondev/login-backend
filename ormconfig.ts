@@ -7,8 +7,8 @@ export default {
   username: 'postgres',
   password: process.env.DATABASE_PASSWORD,
   database: 'test',
-  migrations: ['./src/migrations/**.ts'],
-  entities: ['./src/models/**.ts'],
+  migrations: ['./src/migrations/**.ts', './src/migrations/**.js'],
+  entities: ['./src/models/**.ts', './src/models/**.js'],
   cli: {
     migrationsDir: './src/migrations',
   },

@@ -42,7 +42,7 @@ class UserController {
         });
         return;
       }
-
+      
       // Criptografando a senha
       const salt = bcrypt.genSaltSync(10);
       const hashedPassword = bcrypt.hashSync(password, salt);
@@ -56,12 +56,13 @@ class UserController {
       const filteredUser = {
         name: user.name,
         email: user.email,
+        status: "success"
       };
 
       response.json(filteredUser);
       return;
     } catch (error) {
-      response.status(500).send({ message: 'Erro interno no servidor' });
+      response.status(500).send({ error: 'Erro interno no servidor' });
     }
   }
 
@@ -85,12 +86,12 @@ class UserController {
       });
 
       if (!userExists) {
-        response.status(400).send({ message: 'Email não cadastrado' });
+        response.status(400).send({ error: 'Email não cadastrado' });
         return;
       }
 
       if (!bcrypt.compareSync(password, userExists.password)) {
-        response.status(400).send({ message: 'Senha incorreta' });
+        response.status(400).send({ error: 'Senha incorreta' });
         return;
       }
 
@@ -107,7 +108,7 @@ class UserController {
         });
       return;
     } catch (error) {
-      response.status(500).send({ message: 'Erro interno no servidor' });
+      response.status(500).send({ error: 'Erro interno no servidor' });
     }
   }
 
@@ -126,7 +127,7 @@ class UserController {
       }
 
       if (bcrypt.compareSync(newPassword, (<any>request.user).password)) {
-        response.status(400).send({ message: 'A nova senha deve ser diferente da senha atual' });
+        response.status(400).send({ error: 'A nova senha deve ser diferente da senha atual' });
         return;
       }
 
@@ -139,14 +140,14 @@ class UserController {
         .update({ id: (<any>request.user).id }, { password: hashedPassword });
 
       if (!updatedUser) {
-        response.status(400).send({ message: 'Operação inválida' });
+        response.status(400).send({ error: 'Operação inválida' });
         return;
       }
 
-      response.status(200).send({ message: 'Senha atualizada com sucesso!' });
+      response.status(200).send({ error: 'Senha atualizada com sucesso!' });
       return;
     } catch (error) {
-      response.status(500).send({ message: 'Erro interno no servidor' });
+      response.status(500).send({ error: 'Erro interno no servidor' });
     }
   }
 
@@ -157,7 +158,7 @@ class UserController {
       const isPasswordEqual = bcrypt.compareSync(password, (<any>request.user).password);
 
       if (!isPasswordEqual) {
-        return response.status(400).send({ message: 'Senha incorreta' });
+        return response.status(400).send({ error: 'Senha incorreta' });
       }
 
       const usersRepository = getCustomRepository(UsersRepository);
@@ -165,12 +166,21 @@ class UserController {
       const deletedUser = await usersRepository.delete({ id: (<any>request.user).id });
 
       if (!deletedUser) {
-        return response.status(400).send({ message: 'Operação inválida' });
+        return response.status(400).send({ error: 'Operação inválida' });
       }
 
-      return response.status(200).send({ message: 'Usuário deletado com sucesso!' });
+      return response.status(200).send({ error: 'Usuário deletado com sucesso!' });
     } catch (error) {
-      return response.status(500).send({ message: 'Erro interno no servidor' });
+      return response.status(500).send({ error: 'Erro interno no servidor' });
+    }
+  }
+
+  async verify(request: Request, response: Response) {
+    try {
+      response.json(true);
+    } catch (error) {
+      console.error(error.message);
+      response.status(500).send({ error: 'Erro interno no servidor'})
     }
   }
 }

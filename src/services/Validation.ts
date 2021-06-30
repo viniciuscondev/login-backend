@@ -5,28 +5,28 @@ class Validation {
 
     errors: Array<Object> = [];
 
-    isTrue(value: any, message: String) {
+    isTrue(value: any, error: String) {
       if (value) {
-        this.errors.push({ message });
+        this.errors.push({ error });
       }
     }
 
-    isRequired(value: any, message: String) {
+    isRequired(value: any, error: String) {
       if (!value || value.length <= 0) {
-        this.errors.push({ message });
+        this.errors.push({ error });
       }
     }
 
-    isEmail(value: any, message: String) {
+    isEmail(value: any, error: String) {
       const reg = new RegExp(/^\w+([-+,']\w+)*@\w+([-,]\w+)*\.\w+([-.]\w+)*$/);
       if (!reg.test(value)) {
-        this.errors.push({ message });
+        this.errors.push({ error });
       }
     }
 
-    isPasswordValid(value: any, message: String) {
+    isPasswordValid(value: any, error: String) {
       if (value.length < 6) {
-        this.errors.push({ message });
+        this.errors.push({ error });
       }
     }
 }
