@@ -180,7 +180,31 @@ class UserController {
       response.json(true);
     } catch (error) {
       console.error(error.message);
-      response.status(500).send({ error: 'Erro interno no servidor'})
+      response.status(500).send({ error: 'Erro interno no servidor'});
+    }
+  }
+
+  async getProfile(request: Request, response: Response) {
+    try {
+      const token = request.headers.token.toString();
+
+      const jwtDecoded = jwt.verify(token, process.env.SECRET_KEY);
+
+      const user = (<any>jwtDecoded).user;
+
+      const usersRepository = getCustomRepository(UsersRepository);
+
+      const userData = await usersRepository.findOne({ id: (<any>user).id });
+      
+      const filteredUser = {
+        name: userData.name,
+        email: userData.email        
+      };
+
+      response.json(filteredUser);
+    } catch (error) {
+      console.error(error.message);
+      response.status(500).send({ error: 'Erro interno no servidor'});
     }
   }
 }

@@ -6,9 +6,8 @@ import UsersRepository from '../repositories/UsersRepository';
 
 export default async (request: Request, response: Response, next: NextFunction) => {
   try {
-    const authorizationHeader = request.headers.authorization;
-    const [, token] = authorizationHeader.split(' ');
-
+    const token = request.headers.token.toString();
+    
     if (token) {
       const jwtDecoded = jwt.verify(token, process.env.SECRET_KEY);
 
@@ -19,13 +18,15 @@ export default async (request: Request, response: Response, next: NextFunction) 
       const userExists = await usersRepository.findOne({ id: (<any>request.user).id });
 
       if (!userExists) {
-        response.status(401).send({ message: 'Usuário não existe' });
+        response.status(401).send({ error: 'Usuário não existe' });
         return;
       }
 
       next();
+    } else {
+      response.status(401).send({ error: 'Token não encontrado' });
     }
   } catch (error) {
-    response.status(500).send({ message: 'Erro interno no servidor' });
+    response.status(500).send({ error: 'Token inválido' });
   }
 };
