@@ -114,19 +114,25 @@ class UserController {
 
   async update(request: Request, response: Response) {
     try {
-      const { oldPassword, newPassword } = request.body;
+      const token = request.headers.token.toString();
 
+      const jwtDecoded = jwt.verify(token, process.env.SECRET_KEY);
+
+      const user = (<any>jwtDecoded).user;
+
+      const { newPassword } = request.body;
+            
       const validation = new Validation();
-      validation.isRequired(oldPassword, 'Informe sua senha atual');
+      //validation.isRequired(oldPassword, 'Informe sua senha atual');
       validation.isRequired(newPassword, 'Informe sua nova senha');
       validation.isPasswordValid(newPassword, 'A senha deve ter mais que 6 caracteres');
-
+      
       if (validation.errors.length > 0) {
         response.status(400).json(validation.errors);
         return;
       }
 
-      if (bcrypt.compareSync(newPassword, (<any>request.user).password)) {
+      if (bcrypt.compareSync(newPassword, (<any>user).password)) {
         response.status(400).send({ error: 'A nova senha deve ser diferente da senha atual' });
         return;
       }
@@ -137,7 +143,7 @@ class UserController {
       const usersRepository = getCustomRepository(UsersRepository);
 
       const updatedUser = await usersRepository
-        .update({ id: (<any>request.user).id }, { password: hashedPassword });
+        .update({ id: (<any>user).id }, { password: hashedPassword });
 
       if (!updatedUser) {
         response.status(400).send({ error: 'Operação inválida' });
@@ -153,17 +159,23 @@ class UserController {
 
   async delete(request: Request, response: Response) {
     try {
-      const { password } = request.body;
+      // const { password } = request.body;
 
-      const isPasswordEqual = bcrypt.compareSync(password, (<any>request.user).password);
+      // const isPasswordEqual = bcrypt.compareSync(password, (<any>request.user).password);
 
-      if (!isPasswordEqual) {
-        return response.status(400).send({ error: 'Senha incorreta' });
-      }
+      // if (!isPasswordEqual) {
+      //   return response.status(400).send({ error: 'Senha incorreta' });
+      // }      
+
+      const token = request.headers.token.toString();
+
+      const jwtDecoded = jwt.verify(token, process.env.SECRET_KEY);
+
+      const user = (<any>jwtDecoded).user;
 
       const usersRepository = getCustomRepository(UsersRepository);
 
-      const deletedUser = await usersRepository.delete({ id: (<any>request.user).id });
+      const deletedUser = await usersRepository.delete({ id: (<any>user).id });
 
       if (!deletedUser) {
         return response.status(400).send({ error: 'Operação inválida' });
