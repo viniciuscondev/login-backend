@@ -4,7 +4,7 @@
 
 [NodeJS](https://github.com/nodejs/node) account creation, login and authentication system, using [Express](https://github.com/expressjs/express) framework, [JSON Web Token](https://github.com/auth0/node-jsonwebtoken) for authorization and [node.bcrypt.js](https://github.com/kelektiv/node.bcrypt.js) for encrypting password before storing in [PostgreSQL](https://github.com/postgres/postgres) database.
 
-## How to run in development environment ##
+## Project Installation ##
 
 Node and yarn versions used in the project
 ```
